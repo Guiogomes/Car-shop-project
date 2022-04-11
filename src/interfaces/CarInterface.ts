@@ -2,7 +2,7 @@ import { Document } from 'mongoose';
 import { z } from 'zod';
 import { Vehicle } from './VehicleInterface';
 
-const CarSchema = z.object({
+export const CarSchema = z.object({
   doorsQty: z.number().int().gte(2).lte(4),
   seatsQty: z.number().int().gte(2).lte(7),
 });
