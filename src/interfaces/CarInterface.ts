@@ -1,3 +1,4 @@
+import { Document } from 'mongoose';
 import { z } from 'zod';
 import { Vehicle } from './VehicleInterface';
 
@@ -9,3 +10,4 @@ const CarSchema = z.object({
 type CarType = z.infer<typeof CarSchema>;
 
 export interface Car extends Vehicle, CarType {}
+export interface CarDocument extends Car, Document {}
