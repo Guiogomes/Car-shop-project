@@ -8,14 +8,14 @@ class CarsService extends Service<Car> {
     super(model);
   }
 
-  create = async (data: Car): Promise<Car | ServiceError> => {
+  async create(data: Car): Promise<Car | ServiceError> {
     const parsed = CarSchema.safeParse(data);
     if (!parsed.success) {
       return { error: parsed.error };
     }
     const created = await this.model.create(data);
     return created;
-  };
+  }
 
   update = async (
     id: string,
