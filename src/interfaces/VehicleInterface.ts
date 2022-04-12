@@ -20,6 +20,7 @@ export const VehicleSchema = z.object({
       invalid_type_error: 'Color must be a string',
     })
     .min(3, { message: 'Color must be at least 3 characters long' }),
+  status: z.boolean().optional(),
   buyValue: z
     .number({
       required_error: 'Buy value is required',
@@ -27,8 +28,4 @@ export const VehicleSchema = z.object({
     }).int(),
 });
 
-type VehicleType = z.infer<typeof VehicleSchema>;
-
-export interface Vehicle extends VehicleType {
-  status?: boolean;
-}
+export type Vehicle = z.infer<typeof VehicleSchema>;

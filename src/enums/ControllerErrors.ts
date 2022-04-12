@@ -3,7 +3,7 @@ enum ControllerErrors {
   notFound = 'Object not found',
   requiredId = 'Id is required',
   badRequest = 'Bad request',
-  internalServerError = 'internalServerError',
+  internalServerError = 'internal Server Error',
 }
 
 export default ControllerErrors;

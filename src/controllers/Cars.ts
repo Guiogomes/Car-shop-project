@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
+import { Types } from 'mongoose';
 import RequestIncrement from '../interfaces/RequestIncrement';
 import CarsService from '../services/Cars';
 import StatusCode from '../enums/StatusCode';
 import { Car } from '../interfaces/CarInterface';
 import Controller, { ResponseError } from '.';
 import ControllerErrors from '../enums/ControllerErrors';
-import { Types } from 'mongoose';
 
 class CarsController extends Controller<Car> {
   private _route: string;
@@ -24,12 +24,13 @@ class CarsController extends Controller<Car> {
   create = async (
     req: RequestIncrement<Car>,
     res: Response<Car | ResponseError>,
-  ): Promise<typeof res | undefined> => {
+  ): Promise<typeof res> => {
     try {
-      if (Object.keys(req.body).length === 0) {
-        return res.status(this.status.BAD_REQUEST);
-      }
       const created = await this.service.create(req.body);
+      if (!created) {
+        return res.status(this.status.INTERNAL_SERVER_ERROR)
+          .json({ error: this.errors.internalServerError });
+      }
       if ('error' in created) {
         return res.status(this.status.BAD_REQUEST);
       }
@@ -51,7 +52,7 @@ class CarsController extends Controller<Car> {
     if (id.length !== new Types.ObjectId().toString().length) {
       return res
         .status(this.status.BAD_REQUEST)
-        .json({ error: 'Id must have 24 hexidecimal characters' });
+        .json({ error: 'Id must have 24 hexadecimal characters' });
     }
     const found = await this.service.readOne(id);
     if (!found) {
@@ -63,11 +64,20 @@ class CarsController extends Controller<Car> {
   };
 
   update = async (req: Request, res: Response):Promise<typeof res> => {
-    const updated = await this.service.update(req.params.id, req.body);
+    const { id } = req.params;
+    if (id.length !== new Types.ObjectId().toString().length) {
+      return res
+        .status(this.status.BAD_REQUEST)
+        .json({ error: 'Id must have 24 hexadecimal characters' });
+    }
+    const updated = await this.service.update(id, req.body);
     if (!updated) {
       return res.status(this.status.NOT_FOUND).json({
         error: this.errors.notFound,
       });
+    }
+    if ('error' in updated) {
+      return res.status(this.status.BAD_REQUEST);
     }
     return res.status(this.status.OK).json(updated);
   };
