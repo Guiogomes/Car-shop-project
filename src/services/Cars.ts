@@ -10,6 +10,7 @@ class CarsService extends Service<Car> {
 
   create = async (data: Car): Promise<Car | ServiceError> => {
     const parsed = CarSchema.safeParse(data);
+    console.log(parsed);
     if (!parsed.success) {
       return { error: parsed.error };
     }

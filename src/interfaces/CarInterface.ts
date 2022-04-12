@@ -1,8 +1,8 @@
 import { Document } from 'mongoose';
 import { z } from 'zod';
-import { Vehicle } from './VehicleInterface';
+import { Vehicle, VehicleSchema } from './VehicleInterface';
 
-export const CarSchema = z.object({
+export const CarSchema = VehicleSchema.extend({
   doorsQty: z
     .number({
       required_error: 'Doors quantity is required',
@@ -21,7 +21,7 @@ export const CarSchema = z.object({
     .lte(7, { message: 'Seats quantity must be less or equal than 7' }),
 });
 
-type CarType = z.infer<typeof CarSchema>;
+export type CarType = z.infer<typeof CarSchema>;
 
 export interface Car extends Vehicle, CarType {}
 export interface CarDocument extends Car, Document {}

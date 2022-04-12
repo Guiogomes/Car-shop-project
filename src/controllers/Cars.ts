@@ -27,8 +27,7 @@ class CarsController extends Controller<Car> {
     try {
       const created = await this.service.create(req.body);
       if (!created) {
-        return res.status(this.status.INTERNAL_SERVER_ERROR) 
-          .json({ error: this.errors.internalServerError });
+        return res.status(this.status.BAD_REQUEST);
       }
       return res.status(this.status.CREATED).json(created);
     } catch (e) {
