@@ -5,6 +5,7 @@ import StatusCode from '../enums/StatusCode';
 import { Car } from '../interfaces/CarInterface';
 import Controller, { ResponseError } from '.';
 import ControllerErrors from '../enums/ControllerErrors';
+import { Types } from 'mongoose';
 
 class CarsController extends Controller<Car> {
   private _route: string;
@@ -43,7 +44,13 @@ class CarsController extends Controller<Car> {
   };
 
   readOne = async (req: Request, res: Response):Promise<typeof res> => {
-    const found = await this.service.readOne(req.params.id);
+    const { id } = req.params;
+    if (id.length !== new Types.ObjectId().toString().length) {
+      return res
+        .status(this.status.BAD_REQUEST)
+        .json({ error: 'Id must have 24 hexidecimal characters' });
+    }
+    const found = await this.service.readOne(id);
     if (!found) {
       return res.status(this.status.NOT_FOUND).json({
         error: this.errors.notFound,
