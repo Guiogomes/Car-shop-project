@@ -26,8 +26,11 @@ class CarsController extends Controller<Car> {
     res: Response<Car | ResponseError>,
   ): Promise<typeof res | undefined> => {
     try {
+      if (Object.keys(req.body).length === 0) {
+        return res.status(this.status.BAD_REQUEST);
+      }
       const created = await this.service.create(req.body);
-      if (!created) {
+      if ('error' in created) {
         return res.status(this.status.BAD_REQUEST);
       }
       return res.status(this.status.CREATED).json(created);

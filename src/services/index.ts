@@ -5,7 +5,7 @@ abstract class Service<GenericInteface> {
   constructor(protected model: Model<GenericInteface>) {}
 
   async create(data: GenericInteface)
-    : Promise<GenericInteface | null | ServiceError> {
+    : Promise<GenericInteface | ServiceError> {
     const created = await this.model.create(data);
     return created;
   }
