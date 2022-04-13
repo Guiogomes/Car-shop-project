@@ -76,6 +76,7 @@ class MotorcycleController extends Controller<Motorcycle> {
     if ('error' in updated) {
       return res.status(this.status.BAD_REQUEST);
     }
+    console.log(updated);
     return res.status(this.status.OK).json(updated);
   };
 

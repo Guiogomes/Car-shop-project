@@ -24,7 +24,7 @@ abstract class Service<GenericInteface> {
     id: string,
     data: GenericInteface,
   ): Promise<GenericInteface | null | ServiceError> {
-    const updated = await this.model.update(id, data);
+    const updated = await this.model.update(id, { ...data });
     return updated;
   }
 

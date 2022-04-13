@@ -5,6 +5,11 @@ import { Motorcycle,
 
 const MotorcycleSchema = new Schema<MotorcycleDocument>(
   {
+    model: String,
+    year: Number,
+    color: String,
+    status: Boolean,
+    buyValue: Number,
     engineCapacity: Number,
     category: String,
   },
