@@ -32,7 +32,7 @@ class CarsController extends Controller<Car> {
           .json({ error: this.errors.internalServerError });
       }
       if ('error' in created) {
-        return res.status(this.status.BAD_REQUEST);
+        return res.status(this.status.BAD_REQUEST).json(created);
       }
       return res.status(this.status.CREATED).json(created);
     } catch (e) {

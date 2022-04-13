@@ -20,10 +20,9 @@ abstract class MongoModel<GenericModel> implements Model<GenericModel> {
   }
 
   async update(id: string, data: GenericModel): Promise<GenericModel | null> {
-    const updated = await this.model
-      .findOneAndUpdate({ _id: id }, { ...data }, {
-        new: true,
-      });
+    const updated = await this
+      .model
+      .findOneAndUpdate({ _id: id }, { ...data }, { new: true });
     return updated;
   }
 
