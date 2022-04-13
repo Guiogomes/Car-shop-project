@@ -1,8 +1,8 @@
+import { Types } from 'mongoose';
 import { Car, CarSchema } from '../interfaces/CarInterface';
 import Service from '.';
 import ServiceError from '../interfaces/ServiceErrors';
 import CarsModel from '../models/Cars';
-import { Types } from 'mongoose';
 
 class CarsService extends Service<Car> {
   constructor(model = new CarsModel()) {
