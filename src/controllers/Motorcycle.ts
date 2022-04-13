@@ -25,21 +25,17 @@ class MotorcycleController extends Controller<Motorcycle> {
     req: RequestIncrement<Motorcycle>,
     res: Response<Motorcycle | ResponseError>,
   ): Promise<typeof res> => {
-    try {
-      const created = await this.service.create(req.body);
-      if (!created) {
-        return res.status(this.status.INTERNAL_SERVER_ERROR)
-          .json({ error: this.errors.internalServerError });
-      }
-      if ('error' in created) {
-        return res.status(this.status.BAD_REQUEST).json(created);
-      }
-      return res.status(this.status.CREATED).json(created);
-    } catch (e) {
-      return res
-        .status(this.status.INTERNAL_SERVER_ERROR) 
-        .json({ error: this.errors.internalServerError });
+    const { category } = req.body;
+    if (
+      category !== 'Street' && category !== 'Custom' && category !== 'Trail'
+    ) {
+      return res.status(this.status.BAD_REQUEST).json();
     }
+    const created = await this.service.create(req.body);
+    if ('error' in created) {
+      return res.status(this.status.BAD_REQUEST).json(created);
+    }
+    return res.status(this.status.CREATED).json(created);
   };
 
   read = async (_req: Request, res: Response<Motorcycle[]>)
