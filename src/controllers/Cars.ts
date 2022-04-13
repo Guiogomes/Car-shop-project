@@ -89,7 +89,7 @@ class CarsController extends Controller<Car> {
         error: this.errors.notFound,
       });
     }
-    return res.status(this.status.OK).json(deleted);
+    return res.status(this.status.NO_CONTENT).json(deleted);
   };
 }
 

@@ -28,7 +28,7 @@ abstract class Service<GenericInteface> {
     return updated;
   }
 
-  async delete(id: string): Promise<GenericInteface | null | ServiceError> {
+  async delete(id: string): Promise<GenericInteface | null> {
     const deleted = await this.model.delete(id);
     return deleted;
   }

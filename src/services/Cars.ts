@@ -31,6 +31,15 @@ class CarsService extends Service<Car> {
     const updated = await this.model.update(id, data);
     return updated;
   };
+
+  delete = async (
+    id: string,
+  ): Promise<Car | null> => {
+    if (!id) return null;
+    if (id.length !== new Types.ObjectId().toString().length) return null;
+    const updated = await this.model.delete(id);
+    return updated;
+  };
 }
 
 export default CarsService;
