@@ -4,6 +4,7 @@ import { VehicleSchema } from './VehicleInterface';
 
 export const MotorcycleSchema = VehicleSchema.extend({
   engineCapacity: z.number().int().gte(0).lte(2500),
+  category: z.string(),
 });
 
 type MotorcycleType = z.infer<typeof MotorcycleSchema>;
