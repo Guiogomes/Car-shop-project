@@ -1,10 +1,12 @@
 // import { expect } from 'chai';
+import { z, ZodError } from 'zod';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import CarsService from '../../../services/Cars';
 import ServiceError from '../../../interfaces/ServiceErrors';
 import { Car, CarSchema } from '../../../interfaces/CarInterface';
 import { Types } from 'mongoose';
+import { Type } from 'typescript';
 
 const carsService = new CarsService();
 const carsErrorCreate = {
@@ -159,23 +161,30 @@ describe('Testing Cars Service methods', () => {
 
   describe('Testing update method', () => {
     describe('Failure update method case', () => {
-      before(() => {
-        sinon
-          .stub(carsService, 'update')
-          .rejects(new Error('Error'));
-      });
-
-      after(() => {
-        (carsService.update as sinon.SinonStub).restore();
+      it('Pass a invalid object returns an error', async () => {
+        const parsed = CarSchema.safeParse(carsErrorCreate) as ServiceError;
+        expect(parsed).to.be.an('object');
+        expect(parsed).to.have.property('error');
+        expect(parsed.error.issues).to.be.an('array');
       })
 
       it('Pass a invalid object returns an error', async () => {
-        try {
-          await carsService.update('', carsSuccessCreate);
-        } catch (error) {
-          expect(error).to.be.an('error');
-        }
-      });
+        const parsed = CarSchema.safeParse({}) as ServiceError;
+        expect(parsed).to.be.an('object');
+        expect(parsed).to.have.property('error');
+        expect(parsed.error.issues).to.be.an('array');
+      })
+
+      it('Pass a invalid id returns a error', async () => {
+        const updated = await carsService.update('', carsSuccessCreate);
+        expect(updated).to.be.null;
+      })
+
+      it('Pass a invalid id returns a error', async() => {
+        const updated = await carsService.update('hauahuahua', carsSuccessCreate);
+        expect(updated).to.be.null;
+      })
+
     });
 
     describe('Success update method case', () => {
