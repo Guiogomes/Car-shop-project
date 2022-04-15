@@ -30,7 +30,7 @@ const carsModel = new CarsModel();
 
 describe('Testings for model layer', () => {
   before(async () => {
-    await sinon.stub(mongoose, 'connect').resolves();  
+    sinon.stub(mongoose, 'connect').resolves();  
   });
 
   after(() => {

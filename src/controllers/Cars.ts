@@ -32,7 +32,7 @@ class CarsController extends Controller<Car> {
           .json({ error: this.errors.internalServerError });
       }
       if ('error' in created) {
-        return res.status(this.status.BAD_REQUEST).json(created);
+        return res.status(this.status.B_R).json({ error: this.errors.bR });
       }
       return res.status(this.status.CREATED).json(created);
     } catch (e) {
@@ -51,7 +51,7 @@ class CarsController extends Controller<Car> {
     const { id } = req.params;
     if (id.length !== new Types.ObjectId().toString().length) {
       return res
-        .status(this.status.BAD_REQUEST)
+        .status(this.status.B_R)
         .json({ error: 'Id must have 24 hexadecimal characters' });
     }
     const found = await this.service.readOne(id);
@@ -67,7 +67,7 @@ class CarsController extends Controller<Car> {
     const { id } = req.params;
     if (id.length !== new Types.ObjectId().toString().length) {
       return res
-        .status(this.status.BAD_REQUEST)
+        .status(this.status.B_R)
         .json({ error: 'Id must have 24 hexadecimal characters' });
     }
     const updated = await this.service.update(id, req.body);
@@ -77,7 +77,7 @@ class CarsController extends Controller<Car> {
       });
     }
     if ('error' in updated) {
-      return res.status(this.status.BAD_REQUEST);
+      return res.status(this.status.B_R).json(updated);
     }
     return res.status(this.status.OK).json(updated);
   };

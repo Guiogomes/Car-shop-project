@@ -3,7 +3,9 @@ import { z } from 'zod';
 import { Vehicle, VehicleSchema } from './VehicleInterface';
 
 export const MotorcycleSchema = VehicleSchema.extend({
-  engineCapacity: z.number().int().gte(1).lte(2500),
+  // positive usado com ajuda de Ivanielson Cabral,
+  // faz com que o número seja um número positivo maior que 0
+  engineCapacity: z.number().int().positive().max(2500),
   category: z.enum(['Street', 'Custom', 'Trail']),
 });
 

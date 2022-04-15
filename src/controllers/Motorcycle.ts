@@ -29,11 +29,11 @@ class MotorcycleController extends Controller<Motorcycle> {
     if (
       category !== 'Street' && category !== 'Custom' && category !== 'Trail'
     ) {
-      return res.status(this.status.BAD_REQUEST).json();
+      return res.status(this.status.B_R).json();
     }
     const created = await this.service.create(req.body);
     if ('error' in created) {
-      return res.status(this.status.BAD_REQUEST).json(created);
+      return res.status(this.status.B_R).json({ error: this.errors.bR });
     }
     return res.status(this.status.CREATED).json(created);
   };
@@ -48,7 +48,7 @@ class MotorcycleController extends Controller<Motorcycle> {
     const { id } = req.params;
     if (id.length !== new Types.ObjectId().toString().length) {
       return res
-        .status(this.status.BAD_REQUEST)
+        .status(this.status.B_R)
         .json({ error: 'Id must have 24 hexadecimal characters' });
     }
     const found = await this.service.readOne(id);
@@ -64,7 +64,7 @@ class MotorcycleController extends Controller<Motorcycle> {
     const { id } = req.params;
     if (id.length !== new Types.ObjectId().toString().length) {
       return res
-        .status(this.status.BAD_REQUEST)
+        .status(this.status.B_R)
         .json({ error: 'Id must have 24 hexadecimal characters' });
     }
     const updated = await this.service.update(id, req.body);
@@ -74,7 +74,7 @@ class MotorcycleController extends Controller<Motorcycle> {
       });
     }
     if ('error' in updated) {
-      return res.status(this.status.BAD_REQUEST);
+      return res.status(this.status.B_R);
     }
     console.log(updated);
     return res.status(this.status.OK).json(updated);

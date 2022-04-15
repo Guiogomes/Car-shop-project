@@ -15,7 +15,8 @@ abstract class Service<GenericInteface> {
     return all;
   }
 
-  async readOne(id: string): Promise<GenericInteface | null | ServiceError> {
+  async readOne(id: string)
+    : Promise<GenericInteface | null | ServiceError> {
     const found = await this.model.readOne(id);
     return found;
   }

@@ -2,7 +2,7 @@ enum StatusCode {
   OK = 200,
   CREATED,
   NO_CONTENT = 204,
-  BAD_REQUEST = 400,
+  B_R = 400,
   UNAUTHORIZED,
   FORBIDDEN = 403,
   NOT_FOUND = 404,
