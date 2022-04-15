@@ -19,6 +19,16 @@ class MotorcycleService extends Service<Motorcycle> {
     return created;
   }
 
+  async read(): Promise<Motorcycle[]> {
+    const found = await this.model.read();
+    return found;
+  }
+
+  async readOne(id: string): Promise<Motorcycle | ServiceError | null> {
+    const found = await this.model.readOne(id);
+    return found;
+  }
+
   update = async (
     id: string,
     data: Motorcycle,

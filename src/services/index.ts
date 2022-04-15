@@ -4,35 +4,20 @@ import ServiceError from '../interfaces/ServiceErrors';
 abstract class Service<GenericInteface> {
   constructor(protected model: Model<GenericInteface>) {}
 
-  async create(data: GenericInteface)
-    : Promise<GenericInteface | ServiceError> {
-    const created = await this.model.create(data);
-    return created;
-  }
+  abstract create(data: GenericInteface)
+  : Promise<GenericInteface | ServiceError>;
 
-  async read(): Promise<GenericInteface[]> {
-    const all = await this.model.read();
-    return all;
-  }
+  abstract read(): Promise<GenericInteface[]>;
 
-  async readOne(id: string)
-    : Promise<GenericInteface | null | ServiceError> {
-    const found = await this.model.readOne(id);
-    return found;
-  }
+  abstract readOne(id: string)
+  : Promise<GenericInteface | null | ServiceError>;
 
-  async update(
+  abstract update(
     id: string,
     data: GenericInteface,
-  ): Promise<GenericInteface | null | ServiceError> {
-    const updated = await this.model.update(id, { ...data });
-    return updated;
-  }
+  ): Promise<GenericInteface | null | ServiceError>;
 
-  async delete(id: string): Promise<GenericInteface | null> {
-    const deleted = await this.model.delete(id);
-    return deleted;
-  }
+  abstract delete(id: string): Promise<GenericInteface | null>;
 }
 
 export default Service;

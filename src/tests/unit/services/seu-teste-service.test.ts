@@ -1,18 +1,20 @@
 // import { expect } from 'chai';
-import { z, ZodError } from 'zod';
-import mongoose from 'mongoose';
+import { ZodError } from 'zod';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import CarsService from '../../../services/Cars';
 import MotorcycleService from '../../../services/Motorcycle';
+import CarsModel from '../../../models/Cars';
+import MotorcycleModel from '../../../models/Motorcycle';
 import ServiceError from '../../../interfaces/ServiceErrors';
 import { Car, CarSchema } from '../../../interfaces/CarInterface';
 import { Types } from 'mongoose';
-import { Type } from 'typescript';
 import { Motorcycle, MotorcycleSchema } from '../../../interfaces/MotorcycleInterface';
 
-const carsService = new CarsService();
-const motorcycleService = new MotorcycleService();
+const carModel = new CarsModel();
+const motorcycleModel = new MotorcycleModel();
+const carsService = new CarsService(carModel);
+const motorcycleService = new MotorcycleService(motorcycleModel);
 const carsErrorCreate = {
   model: "",
   year: 0,
@@ -82,7 +84,7 @@ describe('Testing Cars Service methods', () => {
       before(() => {
         sinon
           .stub(CarSchema, 'safeParse')
-          .resolves({success: false, error: { issues: [] }});
+          .resolves(new ZodError([]));
       })
   
       after(() => {
@@ -92,7 +94,6 @@ describe('Testing Cars Service methods', () => {
         const parsed = await carsService.create(carsErrorCreate);
         expect(parsed).to.be.an('object');
         expect(parsed).to.have.property('error');
-        expect('error' in parsed).to.be.equal(true);
       });
     });
 
@@ -101,14 +102,10 @@ describe('Testing Cars Service methods', () => {
         sinon
           .stub(carsService, 'create')
           .resolves(carsSuccessCreateReturn as Car);
-        sinon
-          .stub(CarSchema, 'safeParse')
-          .resolves({success: true, error: { issues: [] }});
       });
 
       after(() => {
         (carsService.create as sinon.SinonStub).restore();
-        (CarSchema.safeParse as sinon.SinonStub).restore();
       })
       it('Pass a valid object returns a success', async () => {
         const created = await carsService.create(carsSuccessCreate);
@@ -125,35 +122,15 @@ describe('Testing Cars Service methods', () => {
   });
 
   describe('Testing read method', () => {
-    describe('Failure read method case', () => {
-      before(() => {
-        sinon
-          .stub(carsService, 'read')
-          .rejects(new Error('Error'));
-      });
-
-      after(() => {
-        (carsService.read as sinon.SinonStub).restore();
-      })
-
-      it('Pass a invalid object returns an error', async () => {
-        try {
-          await carsService.read();
-        } catch (error) {
-          expect(error).to.be.an('error');
-        }
-      });
-    });
-
     describe('Success read method case', () => {
       before(() => {
         sinon
-          .stub(carsService, 'read')
+          .stub(carModel, 'read')
           .resolves([carsSuccessCreateReturn] as Car[]);
       });
 
       after(() => {
-        (carsService.read as sinon.SinonStub).restore();
+        (carModel.read as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -168,12 +145,12 @@ describe('Testing Cars Service methods', () => {
     describe('Failure readOne method case', () => {
       before(() => {
         sinon
-          .stub(carsService, 'readOne')
+          .stub(carModel, 'readOne')
           .resolves(undefined);
       });
 
       after(() => {
-        (carsService.readOne as sinon.SinonStub).restore();
+        (carModel.readOne as sinon.SinonStub).restore();
       })
 
       it('Pass a invalid object returns an error', async () => {
@@ -185,12 +162,12 @@ describe('Testing Cars Service methods', () => {
     describe('Success readOne method case', () => {
       before(() => {
         sinon
-          .stub(carsService, 'readOne')
+          .stub(carModel, 'readOne')
           .resolves(carsSuccessCreateReturn);
       });
 
       after(() => {
-        (carsService.readOne as sinon.SinonStub).restore();
+        (carModel.readOne as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -216,13 +193,6 @@ describe('Testing Cars Service methods', () => {
         expect(parsed.error.issues).to.be.an('array');
       })
 
-      it('Pass a invalid object returns an error', async () => {
-        const parsed = CarSchema.safeParse({}) as ServiceError;
-        expect(parsed).to.be.an('object');
-        expect(parsed).to.have.property('error');
-        expect(parsed.error.issues).to.be.an('array');
-      })
-
       it('Pass a invalid id returns a error', async () => {
         const updated = await carsService.update('', carsSuccessCreate);
         expect(updated).to.be.null;
@@ -238,12 +208,12 @@ describe('Testing Cars Service methods', () => {
     describe('Success update method case', () => {
       before(() => {
         sinon
-          .stub(carsService, 'update')
+          .stub(carModel, 'update')
           .resolves(carsSuccessCreateReturn);
       });
 
       after(() => {
-        (carsService.update as sinon.SinonStub).restore();
+        (carModel.update as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -264,12 +234,12 @@ describe('Testing Cars Service methods', () => {
     describe('Failure delete method case', () => {
       before(() => {
         sinon
-          .stub(carsService, 'delete')
+          .stub(carModel, 'delete')
           .rejects(new Error('Error'));
       });
 
       after(() => {
-        (carsService.delete as sinon.SinonStub).restore();
+        (carModel.delete as sinon.SinonStub).restore();
       })
 
       it('Pass a invalid object returns an error', async () => {
@@ -284,12 +254,12 @@ describe('Testing Cars Service methods', () => {
     describe('Success delete method case', () => {
       before(() => {
         sinon
-          .stub(carsService, 'delete')
+          .stub(carModel, 'delete')
           .resolves(carsSuccessCreateReturn);
       });
 
       after(() => {
-        (carsService.delete as sinon.SinonStub).restore();
+        (carModel.delete as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -309,80 +279,56 @@ describe('Testing Cars Service methods', () => {
 
 describe('Testing Motorcycle Service methods', () => {
   describe('Testing create method', () => {    
-    describe('Failure create method case', () => {
-      before(() => {
-        sinon
-          .stub(MotorcycleSchema, 'safeParse')
-          .resolves({success: false, error: { issues: [] }});
-      })
-  
-      after(() => {
-        (MotorcycleSchema.safeParse as sinon.SinonStub).restore();
-      })
-      it('Pass a invalid object returns an error', async () => {
-        const parsed = await motorcycleService.create(motorcycleErrorCreate);
-        expect(parsed).to.be.an('object');
-        expect(parsed).to.have.property('error');
-        expect('error' in parsed).to.be.equal(true);
-      });
-    });
-
-    describe('Success create method case', () => {      
-      before(async () => {
-        sinon
-          .stub(motorcycleService, 'create')
-          .resolves(motorcycleSuccessCreateReturn);
-        sinon
-          .stub(MotorcycleSchema, 'safeParse')
-          .resolves({success: true, error: { issues: [] }});
+      describe('Failure create method case', () => {
+        before(() => {
+          sinon
+            .stub(MotorcycleSchema, 'safeParse')
+            .resolves(new ZodError([]));
+        })
+    
+        after(() => {
+          (MotorcycleSchema.safeParse as sinon.SinonStub).restore();
+        })
+        it('Pass a invalid object returns an error', async () => {
+          const parsed = await motorcycleService.create(motorcycleErrorCreate);
+          expect(parsed).to.be.an('object');
+          expect(parsed).to.have.property('error');
+          expect('error' in parsed).to.be.equal(true);
+        });
       });
 
-      after(() => {
-        (motorcycleService.create as sinon.SinonStub).restore();
-        (MotorcycleSchema.safeParse as sinon.SinonStub).restore();
-      })
-      it('Pass a valid object returns a success', async () => {
-        const created = await motorcycleService.create(motorcycleSuccessCreate);
-        expect(created).to.be.an('object');
-        expect(created).to.have.property('_id');
-        expect(created).to.have.property('model');
-        expect(created).to.have.property('year');
-        expect(created).to.have.property('color');
-        expect(created).to.have.property('buyValue');
+      describe('Success create method case', () => {      
+        before(async () => {
+          sinon
+            .stub(motorcycleModel, 'create')
+            .resolves(motorcycleSuccessCreateReturn);
+        });
+
+        after(() => {
+          (motorcycleModel.create as sinon.SinonStub).restore();
+        })
+        it('Pass a valid object returns a success', async () => {
+          const created = await motorcycleService.create(motorcycleSuccessCreate);
+          expect(created).to.be.an('object');
+          expect(created).to.have.property('_id');
+          expect(created).to.have.property('model');
+          expect(created).to.have.property('year');
+          expect(created).to.have.property('color');
+          expect(created).to.have.property('buyValue');
+        });
       });
-    });
   });
 
   describe('Testing read method', () => {
-    describe('Failure read method case', () => {
-      before(() => {
-        sinon
-          .stub(motorcycleService, 'read')
-          .rejects(new Error('Error'));
-      });
-
-      after(() => {
-        (motorcycleService.read as sinon.SinonStub).restore();
-      })
-
-      it('Pass a invalid object returns an error', async () => {
-        try {
-          await motorcycleService.read();
-        } catch (error) {
-          expect(error).to.be.an('error');
-        }
-      });
-    });
-
     describe('Success read method case', () => {
       before(() => {
         sinon
-          .stub(motorcycleService, 'read')
+          .stub(motorcycleModel, 'read')
           .resolves([motorcycleSuccessCreateReturn] as Motorcycle[]);
       });
 
       after(() => {
-        (motorcycleService.read as sinon.SinonStub).restore();
+        (motorcycleModel.read as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -397,12 +343,12 @@ describe('Testing Motorcycle Service methods', () => {
     describe('Failure readOne method case', () => {
       before(() => {
         sinon
-          .stub(motorcycleService, 'readOne')
+          .stub(motorcycleModel, 'readOne')
           .resolves(undefined);
       });
 
       after(() => {
-        (motorcycleService.readOne as sinon.SinonStub).restore();
+        (motorcycleModel.readOne as sinon.SinonStub).restore();
       })
 
       it('Pass a invalid object returns an error', async () => {
@@ -414,12 +360,12 @@ describe('Testing Motorcycle Service methods', () => {
     describe('Success readOne method case', () => {
       before(() => {
         sinon
-          .stub(motorcycleService, 'readOne')
+          .stub(motorcycleModel, 'readOne')
           .resolves(motorcycleSuccessCreateReturn);
       });
 
       after(() => {
-        (motorcycleService.readOne as sinon.SinonStub).restore();
+        (motorcycleModel.readOne as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -435,44 +381,68 @@ describe('Testing Motorcycle Service methods', () => {
   })
 
   describe('Testing update method', () => {
-    describe('Failure update method case', () => {
+  describe('Failure update method case', () => {
+    describe('Passing a invalid object', () => {
       before(() => {
         sinon
           .stub(MotorcycleSchema, 'safeParse')
-          .resolves({success: false, error: { issues: [] }});
+          .resolves(new ZodError([]));
       })
   
       after(() => {
         (MotorcycleSchema.safeParse as sinon.SinonStub).restore();
       })
+
       it('Pass a invalid object returns an error', async () => {
         const parsed =  await motorcycleService.create(motorcycleErrorCreate);
         expect(parsed).to.be.an('object');
         expect(parsed).to.have.property('error');
         expect('error' in parsed).to.be.equal(true);
       })
+    });
 
+    describe('Passing invalid id', () => {
+      before(() => {
+        sinon
+          .stub(motorcycleModel, 'update')
+          .resolves(null)
+      });
+      after(() => {
+        (motorcycleModel.update as sinon.SinonStub).restore();
+      });
       it('Pass a invalid id returns a error', async () => {
         const updated = await motorcycleService.update('', motorcycleSuccessCreate);
         expect(updated).to.be.null;
-      })
+      });
+    })
+
+    describe('Passing an id diferent of Oid', () => {
+      before(() => {
+        sinon
+          .stub(motorcycleModel, 'update')
+          .resolves(null)
+      });
+      after(() => {
+        (motorcycleModel.update as sinon.SinonStub).restore();
+      });
 
       it('Pass a invalid id returns a error', async() => {
-        const updated = await motorcycleService.update('hauahuahua', motorcycleSuccessCreate);
+        const updated = await motorcycleService.update('ahusdahsudhauhaudsahuhada', motorcycleSuccessCreate);
         expect(updated).to.be.null;
       })
-
     });
+  });
+
 
     describe('Success update method case', () => {
       before(() => {
         sinon
-          .stub(motorcycleService, 'update')
+          .stub(motorcycleModel, 'update')
           .resolves(motorcycleSuccessCreateReturn);
       });
 
       after(() => {
-        (motorcycleService.update as sinon.SinonStub).restore();
+        (motorcycleModel.update as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -487,17 +457,17 @@ describe('Testing Motorcycle Service methods', () => {
       });
     });
   });
-
+  
   describe('Testing delete method', () => {
     describe('Failure delete method case', () => {
       before(() => {
         sinon
-          .stub(motorcycleService, 'delete')
+          .stub(motorcycleModel, 'delete')
           .rejects(new Error('Error'));
       });
 
       after(() => {
-        (motorcycleService.delete as sinon.SinonStub).restore();
+        (motorcycleModel.delete as sinon.SinonStub).restore();
       })
 
       it('Pass a invalid object returns an error', async () => {
@@ -512,12 +482,12 @@ describe('Testing Motorcycle Service methods', () => {
     describe('Success delete method case', () => {
       before(() => {
         sinon
-          .stub(motorcycleService, 'delete')
+          .stub(motorcycleModel, 'delete')
           .resolves(motorcycleSuccessCreateReturn);
       });
 
       after(() => {
-        (motorcycleService.delete as sinon.SinonStub).restore();
+        (motorcycleModel.delete as sinon.SinonStub).restore();
       })
 
       it('Pass a valid object returns a success', async () => {
@@ -531,5 +501,6 @@ describe('Testing Motorcycle Service methods', () => {
 
       });
     });
-  })
+  });
 });
+

@@ -18,6 +18,16 @@ class CarsService extends Service<Car> {
     return created;
   }
 
+  async read(): Promise<Car[]> {
+    const all = await this.model.read();
+    return all;
+  }
+
+  async readOne(id: string): Promise<Car | ServiceError | null> {
+    const found = await this.model.readOne(id);
+    return found;
+  }
+
   update = async (
     id: string,
     data: Car,

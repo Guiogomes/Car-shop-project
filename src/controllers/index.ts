@@ -19,41 +19,10 @@ abstract class Controller<GenericInterface> {
 
   abstract create(req: RequestIncrement<GenericInterface>, res: Response)
   : Promise<typeof res | undefined>;
-
-  read = async (_req: Request, res: Response): Promise<typeof res> => {
-    const all = await this.service.read();
-    return res.status(this.status.OK).json(all);
-  };
-
-  readOne = async (req: Request, res: Response): Promise<typeof res> => {
-    const found = await this.service.readOne(req.params.id);
-    if (!found) {
-      return res.status(this.status.NOT_FOUND).json({
-        error: this.errors.notFound,
-      });
-    }
-    return res.status(this.status.OK).json(found);
-  };
-
-  update = async (req: Request, res: Response): Promise<typeof res> => {
-    const updated = await this.service.update(req.params.id, req.body);
-    if (!updated) {
-      return res.status(this.status.NOT_FOUND).json({
-        error: this.errors.notFound,
-      });
-    }
-    return res.status(this.status.OK).json(updated);
-  };
-
-  delete = async (req: Request, res: Response): Promise<typeof res> => {
-    const deleted = await this.service.delete(req.params.id);
-    if (!deleted) {
-      return res.status(this.status.NOT_FOUND).json({
-        error: this.errors.notFound,
-      });
-    }
-    return res.status(this.status.OK).json(deleted);
-  };
+  abstract read(_req: Request, res: Response): Promise<typeof res>;
+  abstract readOne(req: Request, res: Response): Promise<typeof res>;
+  abstract update(req: Request, res: Response): Promise<typeof res>;
+  abstract delete(req: Request, res: Response): Promise<typeof res>;
 }
 
 export default Controller;

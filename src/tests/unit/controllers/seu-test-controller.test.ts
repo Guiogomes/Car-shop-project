@@ -378,25 +378,6 @@ describe('Testing Controller methods', () => {
       })
 
       describe('Error case', () => {
-        describe('Testing catch', () => {
-          before(async () => {
-            response.status = sinon.stub().returns(response);
-            response.json = sinon.stub();
-            sinon
-              .stub(motorcycleService, 'create')
-              .rejects();
-          });
-        
-          after(()=>{
-            (motorcycleService.create as sinon.SinonStub).restore();
-          })
-        
-          it('Error create motorcycle', async () => {
-            await motorcycleController.create(request as RequestIncrement<Motorcycle>, response as unknown as Response)
-            expect((response.status as sinon.SinonStub).calledWith(500)).to.be.true;
-            expect((response.json as sinon.SinonStub).calledWith({ error: 'internal Server Error' })).to.be.true;
-          });
-        });
         describe('Testing invalid fields', () => {
           before(async () => {
             response.status = sinon.stub().returns(response);
@@ -410,16 +391,23 @@ describe('Testing Controller methods', () => {
             sinon.restore();
           })
         
-          it('Error create car', async () => {
+          it('Error create motorcycle', async () => {
             await motorcycleController.create(request as RequestIncrement<Motorcycle>, response as unknown as Response)
             expect((response.status as sinon.SinonStub).calledWith(400)).to.be.true;
             expect((response.json as sinon.SinonStub).calledWith({ error: 'Bad request' })).to.be.true;
           });
         });
-        describe('Testing undefined return', () => {
+        describe('Testing wrong category return', () => {
+          const request = {} as RequestIncrement<Motorcycle>;
+          const response = {} as Response;
+
           before(async () => {
             response.status = sinon.stub().returns(response);
             response.json = sinon.stub();
+            request.body = {
+              ...motorcycleSuccessCreate,
+              category: 'wrong' as categoryOption,
+            }
             sinon
               .stub(motorcycleService, 'create')
               .resolves(undefined);
@@ -429,10 +417,9 @@ describe('Testing Controller methods', () => {
             sinon.restore();
           });
 
-          it('Returns undefined', async() => {
+          it('Returns a bad request status', async() => {
             await motorcycleController.create(request as RequestIncrement<Motorcycle>, response as unknown as Response)
-            expect((response.status as sinon.SinonStub).calledWith(500)).to.be.true;
-            expect((response.json as sinon.SinonStub).calledWith({ error: 'internal Server Error' })).to.be.true;
+            expect((response.status as sinon.SinonStub).calledWith(400)).to.be.true;
           });
         });
       })
@@ -457,7 +444,7 @@ describe('Testing Controller methods', () => {
       it('Success read car', async () => {
         await motorcycleController.read(request, response);
         expect((response.status as sinon.SinonStub).calledWith(200)).to.be.true;
-        expect((response.json as sinon.SinonStub).calledWith([])).to.be.true;
+        expect((response.json as sinon.SinonStub).calledWith([motorcycleSuccessCreateReturn])).to.be.true;
       });
 
     });
