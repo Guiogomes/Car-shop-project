@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import mongoose from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import * as sinon from 'sinon';
 import { Types } from 'mongoose';
-import CarsModel from '../../../models/Cars';
+import CarsModel, { CarSchema } from '../../../models/Cars';
 import MotorcycleModel from '../../../models/Motorcycle';
 
 enum categoryOption {
@@ -57,12 +57,12 @@ describe('Testings for model layer car', () => {
   });
 
   describe('Testing read method on car', () => {
-    before(() => {
-      sinon.stub(carsModel, 'read').resolves(returnMock);
+    before(async () => {
+      sinon.stub(mongoose.Model, 'find').resolves(returnMock);
     });
   
     after(() => {
-      (carsModel.read as sinon.SinonStub).restore();
+      (mongoose.Model.find as sinon.SinonStub).restore();
     });
   
     it('should return all records', async () => {
@@ -74,11 +74,11 @@ describe('Testings for model layer car', () => {
 
   describe('Testing readOne method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'readOne').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'findOne').resolves(returnMock[0]);
     });
   
     after(() => {
-      (carsModel.readOne as sinon.SinonStub).restore();
+      (mongoose.Model.findOne as sinon.SinonStub).restore();
     });
   
     it('should return one record', async () => {
@@ -96,11 +96,11 @@ describe('Testings for model layer car', () => {
 
   describe('Testing create method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'create').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'create').resolves(returnMock[0]);
     });
   
     after(async () => {
-      (carsModel.create as sinon.SinonStub).restore();
+      (mongoose.Model.create as sinon.SinonStub).restore();
     });
   
     it('should create a record', async () => {
@@ -118,11 +118,11 @@ describe('Testings for model layer car', () => {
 
   describe('Testing update method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'update').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'findOneAndUpdate').resolves(returnMock[0]);
     });
   
     after(async () => {
-      (carsModel.update as sinon.SinonStub).restore();
+      (mongoose.Model.findOneAndUpdate as sinon.SinonStub).restore();
     });
   
     it('should update a record', async () => {
@@ -140,11 +140,11 @@ describe('Testings for model layer car', () => {
 
   describe('Testing delete method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'delete').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'findOneAndDelete').resolves(returnMock[0]);
     });
   
     after(async () => {
-      (carsModel.delete as sinon.SinonStub).restore();
+      (mongoose.Model.findOneAndDelete as sinon.SinonStub).restore();
     });
   
     it('should delete a record', async () => {
@@ -171,106 +171,99 @@ describe('Testings for model layer motorcycle', () => {
   });
 
   describe('Testing read method on car', () => {
-    before(() => {
-      sinon.stub(motorcycleModel, 'read').resolves(motorcycleSuccessCreateReturn);
+    before(async() => {
+      sinon.stub(mongoose.Model, 'find').resolves(motorcycleSuccessCreateReturn);
     });
   
     after(() => {
-      (carsModel.read as sinon.SinonStub).restore();
+      (mongoose.Model.find as sinon.SinonStub).restore();
     });
   
     it('should return all records', async () => {
-      const result = await carsModel.read();
+      const result = await motorcycleModel.read();
       expect(result).to.be.an('array');
-      expect(result).to.have.lengthOf(2);
+      expect(result).to.have.lengthOf(1);
     });
   })
 
   describe('Testing readOne method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'readOne').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'findOne').resolves(motorcycleSuccessCreateReturn[0]);
     });
   
     after(() => {
-      (carsModel.readOne as sinon.SinonStub).restore();
+      (mongoose.Model.findOne as sinon.SinonStub).restore();
     });
   
     it('should return one record', async () => {
-      const result = await carsModel.readOne(returnMock[0]._id);
+      const result = await motorcycleModel.readOne(motorcycleSuccessCreateReturn[0]._id.toString());
       expect(result).to.be.an('object');
       expect(result).to.have.property('_id');
       expect(result).to.have.property('model');
       expect(result).to.have.property('year');
       expect(result).to.have.property('color');
       expect(result).to.have.property('buyValue');
-      expect(result).to.have.property('doorsQty');
-      expect(result).to.have.property('seatsQty');
     });
   })
 
   describe('Testing create method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'create').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'create').resolves(motorcycleSuccessCreateReturn[0]);
     });
   
     after(async () => {
-      (carsModel.create as sinon.SinonStub).restore();
+      (mongoose.Model.create as sinon.SinonStub).restore();
     });
   
     it('should create a record', async () => {
-      const result = await carsModel.create(returnMock[0]);
+      const result = await motorcycleModel.create(motorcycleSuccessCreateReturn[0]);
       expect(result).to.be.an('object');
       expect(result).to.have.property('_id');
       expect(result).to.have.property('model');
       expect(result).to.have.property('year');
       expect(result).to.have.property('color');
       expect(result).to.have.property('buyValue');
-      expect(result).to.have.property('doorsQty');
-      expect(result).to.have.property('seatsQty');
     });
   });
 
   describe('Testing update method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'update').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'findOneAndUpdate').resolves(motorcycleSuccessCreateReturn[0]);
     });
   
     after(async () => {
-      (carsModel.update as sinon.SinonStub).restore();
+      (mongoose.Model.findOneAndUpdate as sinon.SinonStub).restore();
     });
   
     it('should update a record', async () => {
-      const result = await carsModel.update(returnMock[0]._id, returnMock[0]);
+      const result = await motorcycleModel.update(motorcycleSuccessCreateReturn[0]._id.toString(),
+        motorcycleSuccessCreateReturn[0]);
       expect(result).to.be.an('object');
       expect(result).to.have.property('_id');
       expect(result).to.have.property('model');
       expect(result).to.have.property('year');
       expect(result).to.have.property('color');
       expect(result).to.have.property('buyValue');
-      expect(result).to.have.property('doorsQty');
-      expect(result).to.have.property('seatsQty');
     });
   });
 
   describe('Testing delete method on car', () => {
     before(() => {
-      sinon.stub(carsModel, 'delete').resolves(returnMock[0]);
+      sinon.stub(mongoose.Model, 'findOneAndDelete').resolves(motorcycleSuccessCreateReturn[0]);
     });
   
     after(async () => {
-      (carsModel.delete as sinon.SinonStub).restore();
+      (mongoose.Model.findOneAndDelete as sinon.SinonStub).restore();
     });
   
     it('should delete a record', async () => {
-      const result = await carsModel.delete(returnMock[0]._id);
+      const result = await motorcycleModel.delete(motorcycleSuccessCreateReturn[0]._id.toString());
       expect(result).to.be.an('object');
       expect(result).to.have.property('_id');
       expect(result).to.have.property('model');
       expect(result).to.have.property('year');
       expect(result).to.have.property('color');
       expect(result).to.have.property('buyValue');
-      expect(result).to.have.property('doorsQty');
-      expect(result).to.have.property('seatsQty');
     });
   });
 });

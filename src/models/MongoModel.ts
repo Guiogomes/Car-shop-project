@@ -2,7 +2,7 @@ import { Model as MongooseModel, Document } from 'mongoose';
 import { Model } from '../interfaces/ModelInterface';
 
 abstract class MongoModel<GenericModel> implements Model<GenericModel> {
-  constructor(protected model: MongooseModel<GenericModel & Document>) {}
+  constructor(public model: MongooseModel<GenericModel & Document>) {}
 
   async create(data: GenericModel): Promise<GenericModel> {
     const created = await this.model.create(data);

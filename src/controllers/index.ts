@@ -15,7 +15,7 @@ abstract class Controller<GenericInterface> {
 
   protected status = StatusCode;
 
-  constructor(protected service: Service<GenericInterface>) {}
+  constructor(public service: Service<GenericInterface>) {}
 
   abstract create(req: RequestIncrement<GenericInterface>, res: Response)
   : Promise<typeof res | undefined>;

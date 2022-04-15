@@ -87,6 +87,12 @@ const { expect } = chai;
 
 describe('Testing Controller methods', () => {
   describe('Testing CarsController methods', () => {
+    describe('testing get route method', () => {      
+      it('route is equal a /cars', () => {
+        const route = carController.route;
+        expect(route).to.be.equal('/cars');
+      })
+    })
     describe('Testing create method', () => {
       const response = {} as Response;
       const request = {} as RequestIncrement<Car>;
@@ -350,9 +356,15 @@ describe('Testing Controller methods', () => {
       });
 
     });
-  })
+  });
 
-  describe('Testing CarsController methods', () => {
+  describe('Testing MotorcycleController methods', () => {
+    describe('testing get route method', () => {      
+      it('route is equal a /motorcycles', () => {
+        const route = motorcycleController.route;
+        expect(route).to.be.equal('/motorcycles');
+      })
+    })
     describe('Testing create method', () => {
       const response = {} as Response;
       const request = {} as RequestIncrement<Motorcycle>;
@@ -604,7 +616,5 @@ describe('Testing Controller methods', () => {
       });
 
     });
-  })
-
-
+  });
 });

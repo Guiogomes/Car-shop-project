@@ -2,7 +2,7 @@ import { Schema, model as createModel } from 'mongoose';
 import MongoModel from './MongoModel';
 import { Car, CarDocument } from '../interfaces/CarInterface';
 
-const CarSchema = new Schema<CarDocument>(
+export const CarSchema = new Schema<CarDocument>(
   {
     model: String,
     year: Number,
