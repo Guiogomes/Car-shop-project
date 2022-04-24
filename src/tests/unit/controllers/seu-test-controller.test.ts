@@ -249,6 +249,29 @@ describe('Testing Controller methods', () => {
             expect((response.json as sinon.SinonStub).calledWith({ error: 'Object not found' })).to.be.true;
           });
         });
+
+        describe.only('Testing invalid id with hexadecimal case', () => {
+          const response = {} as Response;
+          const request = {} as Request;
+          before(async () => {
+            response.status = sinon.stub().returns(response);
+            response.json = sinon.stub();
+            request.params = { id: new Types.ObjectId().toString() };
+            sinon
+              .stub(carService, 'readOne')
+              .resolves(undefined);
+          });
+        
+          after(()=>{
+            sinon.restore();
+          })
+        
+          it('Error create car', async () => {
+            await carController.create(request, response);
+            expect((response.status as sinon.SinonStub).calledWith(400)).to.be.true;
+            // expect((response.json as sinon.SinonStub).calledWith({ error: 'Id must have 24 hexadecimal characters' })).to.be.true;
+          });
+        });
       });
 
     });

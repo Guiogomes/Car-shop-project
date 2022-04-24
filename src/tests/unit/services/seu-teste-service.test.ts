@@ -399,6 +399,13 @@ describe('Testing Motorcycle Service methods', () => {
         expect(parsed).to.have.property('error');
         expect('error' in parsed).to.be.equal(true);
       })
+
+      it('safeParse success have value false', () => {
+        const parsed =  MotorcycleSchema.safeParse(motorcycleErrorCreate);
+        expect(parsed).to.be.an('object');
+        expect(parsed).to.have.property('success');
+        expect(parsed.success).to.be.equal(false);
+      });
     });
 
     describe('Passing invalid id', () => {
