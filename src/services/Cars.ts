@@ -23,7 +23,9 @@ class CarsService extends Service<Car> {
     return all;
   }
 
-  async readOne(id: string): Promise<Car | ServiceError | null> {
+  async readOne(id: string): Promise<Car | ServiceError | null | undefined> {
+    if (!id) return null;
+    if (id.length !== new Types.ObjectId().toString().length) return undefined;
     const found = await this.model.readOne(id);
     return found;
   }

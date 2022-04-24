@@ -49,12 +49,12 @@ class CarsController extends Controller<Car> {
 
   readOne = async (req: Request, res: Response):Promise<typeof res> => {
     const { id } = req.params;
-    if (id.length !== new Types.ObjectId().toString().length) {
+    const found = await this.service.readOne(id);
+    if (found === undefined) {
       return res
         .status(this.status.B_R)
         .json({ error: 'Id must have 24 hexadecimal characters' });
     }
-    const found = await this.service.readOne(id);
     if (!found) {
       return res.status(this.status.NOT_FOUND).json({
         error: this.errors.notFound,

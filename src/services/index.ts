@@ -10,7 +10,7 @@ abstract class Service<GenericInteface> {
   abstract read(): Promise<GenericInteface[]>;
 
   abstract readOne(id: string)
-  : Promise<GenericInteface | null | ServiceError>;
+  : Promise<GenericInteface | null | ServiceError | undefined>;
 
   abstract update(
     id: string,
